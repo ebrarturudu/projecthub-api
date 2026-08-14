@@ -1,4 +1,4 @@
-package com.projecthub.projecthub_api.entity;
+package com.projecthub.projecthub_api.User.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

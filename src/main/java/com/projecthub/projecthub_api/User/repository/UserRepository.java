@@ -1,10 +1,10 @@
-package com.projecthub.projecthub_api.repository;
+package com.projecthub.projecthub_api.User.repository;
 
 
-import com.projecthub.projecthub_api.entity.User;
+import com.projecthub.projecthub_api.User.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository <User, UUID> {
-    
+
 }
