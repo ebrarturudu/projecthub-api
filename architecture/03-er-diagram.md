@@ -18,53 +18,53 @@ Version 1 intentionally uses a simplified relational model. Future versions may 
 erDiagram
 
     USER {
-        bigint id PK
+        id PK
     }
 
     ORGANIZATION {
-        bigint id PK
+        id PK
     }
 
     ORGANIZATION_MEMBERSHIP {
-        bigint id PK
-        bigint user_id FK
-        bigint organization_id FK
+        id PK
+        user_id FK
+        organization_id FK
     }
 
     PROJECT {
-        bigint id PK
-        bigint organization_id FK
+        id PK
+        organization_id FK
     }
 
     PROJECT_MEMBERSHIP {
-        bigint id PK
-        bigint user_id FK
-        bigint project_id FK
+        id PK
+        user_id FK
+        project_id FK
     }
 
     BOARD {
-        bigint id PK
-        bigint project_id FK
+        id PK
+        project_id FK
     }
 
     TASK {
-        bigint id PK
-        bigint project_id FK
-        bigint assignee_id FK
+        id PK
+        project_id FK
+        assignee_id FK
     }
 
     COMMENT {
-        bigint id PK
-        bigint task_id FK
-        bigint author_id FK
+        id PK
+        task_id FK
+        author_id FK
     }
 
     INVITATION {
-        bigint id PK
-        bigint organization_id FK
-        bigint project_id FK
-        bigint invited_user_id FK
-        bigint invited_by_id FK
+        id PK
+        organization_id FK
+        project_id FK
+        invited_user_id FK
+        invited_by_id FK
     }
 
     USER ||--o| ORGANIZATION_MEMBERSHIP : has
