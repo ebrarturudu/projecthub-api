@@ -1,6 +1,7 @@
 package com.projecthub.projecthub_api.project.controller;
 
 import com.projecthub.projecthub_api.project.dto.AddProjectMemberRequest;
+import com.projecthub.projecthub_api.project.dto.ProjectMemberResponse;
 import com.projecthub.projecthub_api.project.entity.ProjectMember;
 import com.projecthub.projecthub_api.project.service.ProjectMemberService;
 import jakarta.validation.Valid;
@@ -19,15 +20,22 @@ public class ProjectMemberController {
 
     @PostMapping("/{projectId}/members")
     @ResponseStatus(HttpStatus.CREATED)
-    public ProjectMember addMember(
+    public ProjectMemberResponse addMember(
             @PathVariable Long projectId,
             @Valid @RequestBody AddProjectMemberRequest request
     ) {
 
-        return projectMemberService.addMember(
+        ProjectMember projectMember = projectMemberService.addMember(
                 projectId,
                 request.getUserId(),
                 request.getRole()
+        );
+
+        return new ProjectMemberResponse(
+                projectMember.getId(),
+                projectMember.getProject().getId(),
+                projectMember.getUser().getId(),
+                projectMember.getRole()
         );
     }
 }

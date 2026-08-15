@@ -7,6 +7,9 @@ import com.projecthub.projecthub_api.project.entity.Project;
 import com.projecthub.projecthub_api.project.entity.ProjectMember;
 import com.projecthub.projecthub_api.project.repository.ProjectMemberRepository;
 import com.projecthub.projecthub_api.project.repository.ProjectRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -34,10 +37,41 @@ public class ProjectMemberService {
             Role role
     ) {
 
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Current user not found")
+                );
+
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Project not found")
                 );
+
+        ProjectMember currentMember =
+                projectMemberRepository.findByProjectIdAndUserId(
+                        projectId,
+                        currentUser.getId()
+                ).orElseThrow(() ->
+                        new AccessDeniedException(
+                                "You are not a member of this project"
+                        )
+                );
+
+        Role currentUserRole = currentMember.getRole();
+
+        if (currentUserRole != Role.OWNER
+                && currentUserRole != Role.ADMIN
+                && currentUserRole != Role.PROJECT_MANAGER) {
+
+            throw new AccessDeniedException(
+                    "You do not have permission to add members"
+            );
+        }
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
