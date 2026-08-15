@@ -9,6 +9,7 @@ import com.projecthub.projecthub_api.auth.exception.EmailAlreadyExistsException;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,7 @@ public class AuthService {
                 savedUser.getUpdatedAt()
         );
     }
-    public void login(LoginRequest request) {
+     public void login(LoginRequest request) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -64,4 +65,13 @@ public class AuthService {
                 )
         );
     }
+   /* public void login(LoginRequest request) {
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+    }*/
 }
