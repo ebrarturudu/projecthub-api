@@ -3,9 +3,12 @@ package com.projecthub.projecthub_api.auth.service;
 import com.projecthub.projecthub_api.User.dto.UserResponse;
 import com.projecthub.projecthub_api.User.entity.User;
 import com.projecthub.projecthub_api.User.repository.UserRepository;
+import com.projecthub.projecthub_api.auth.dto.LoginRequest;
 import com.projecthub.projecthub_api.auth.dto.RegisterRequest;
 import com.projecthub.projecthub_api.auth.exception.EmailAlreadyExistsException;
+import org.springframework.security.authentication.AuthenticationManager;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +17,16 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public AuthService(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     public UserResponse register(RegisterRequest request) {
@@ -47,6 +53,15 @@ public class AuthService {
                 savedUser.getEmail(),
                 savedUser.getCreatedAt(),
                 savedUser.getUpdatedAt()
+        );
+    }
+    public void login(LoginRequest request) {
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
     }
 }
