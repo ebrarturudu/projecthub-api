@@ -2,6 +2,7 @@ package com.projecthub.projecthub_api.auth.controller;
 
 import com.projecthub.projecthub_api.User.dto.UserResponse;
 import com.projecthub.projecthub_api.auth.dto.LoginRequest;
+import com.projecthub.projecthub_api.auth.dto.LoginResponse;
 import com.projecthub.projecthub_api.auth.dto.RegisterRequest;
 import com.projecthub.projecthub_api.auth.service.AuthService;
 
@@ -35,11 +36,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(
+    public ResponseEntity<LoginResponse> login(
             @Valid @RequestBody LoginRequest request
     ) {
-        authService.login(request);
+        LoginResponse response = authService.login(request);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(response);
     }
 }

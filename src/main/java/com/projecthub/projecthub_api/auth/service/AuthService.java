@@ -4,8 +4,10 @@ import com.projecthub.projecthub_api.User.dto.UserResponse;
 import com.projecthub.projecthub_api.User.entity.User;
 import com.projecthub.projecthub_api.User.repository.UserRepository;
 import com.projecthub.projecthub_api.auth.dto.LoginRequest;
+import com.projecthub.projecthub_api.auth.dto.LoginResponse;
 import com.projecthub.projecthub_api.auth.dto.RegisterRequest;
 import com.projecthub.projecthub_api.auth.exception.EmailAlreadyExistsException;
+import com.projecthub.projecthub_api.auth.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,15 +21,18 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            JwtService jwtService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     public UserResponse register(RegisterRequest request) {
@@ -56,7 +61,7 @@ public class AuthService {
                 savedUser.getUpdatedAt()
         );
     }
-     public void login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -64,14 +69,9 @@ public class AuthService {
                         request.getPassword()
                 )
         );
-    }
-   /* public void login(LoginRequest request) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-    }*/
+        String token = jwtService.generateToken(request.getEmail());
+
+        return new LoginResponse(token);
+    }
 }

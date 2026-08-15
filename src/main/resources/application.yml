@@ -7,3 +7,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+jwt:
+  secret: ProjectHubSuperSecretKeyChangeThisToSomethingLongAndRandom123456789
