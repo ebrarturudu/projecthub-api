@@ -3,15 +3,18 @@ package com.projecthub.projecthub_api.project.service;
 import com.projecthub.projecthub_api.User.entity.Role;
 import com.projecthub.projecthub_api.User.entity.User;
 import com.projecthub.projecthub_api.User.repository.UserRepository;
+import com.projecthub.projecthub_api.project.dto.ProjectMemberResponse;
 import com.projecthub.projecthub_api.project.entity.Project;
 import com.projecthub.projecthub_api.project.entity.ProjectMember;
 import com.projecthub.projecthub_api.project.repository.ProjectMemberRepository;
 import com.projecthub.projecthub_api.project.repository.ProjectRepository;
+
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -73,6 +76,15 @@ public class ProjectMemberService {
             );
         }
 
+        if (role == Role.OWNER &&
+                projectMemberRepository.existsByProjectIdAndRole(
+                        projectId, Role.OWNER
+                )) {
+            throw new IllegalStateException(
+                    "Project already has an owner"
+            );
+
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new IllegalArgumentException("User not found")
@@ -97,5 +109,43 @@ public class ProjectMemberService {
         projectMember.setRole(role);
 
         return projectMemberRepository.save(projectMember);
+    }
+    private ProjectMember getCurrentUserProjectMembership(Long projectId) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Current user not found")
+                );
+
+        return projectMemberRepository
+                .findByProjectIdAndUserId(projectId, currentUser.getId())
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "User is not a member of this project"
+                        )
+                );
+    }
+    public List<ProjectMemberResponse> getMembers(Long projectId) {
+
+        if (!projectRepository.existsById(projectId)) {
+            throw new IllegalArgumentException("Project not found");
+        }
+
+        getCurrentUserProjectMembership(projectId);
+
+        return projectMemberRepository.findAllByProjectId(projectId)
+                .stream()
+                .map(member -> new ProjectMemberResponse(
+                        member.getId(),
+                        member.getProject().getId(),
+                        member.getUser().getId(),
+                        member.getRole()
+                ))
+                .toList();
     }
 }

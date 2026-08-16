@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectMemberController {
@@ -37,5 +39,11 @@ public class ProjectMemberController {
                 projectMember.getUser().getId(),
                 projectMember.getRole()
         );
+    }
+    @GetMapping("/{projectId}/members")
+    public List<ProjectMemberResponse> getMembers(
+            @PathVariable Long projectId
+    ) {
+        return projectMemberService.getMembers(projectId);
     }
 }
