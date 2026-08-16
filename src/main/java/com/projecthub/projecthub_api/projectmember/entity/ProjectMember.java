@@ -1,8 +1,11 @@
-/*package com.projecthub.projecthub_api.project.entity;
+package com.projecthub.projecthub_api.projectmember.entity;
 
-import com.projecthub.projecthub_api.User.entity.Role;
 import com.projecthub.projecthub_api.User.entity.User;
+import com.projecthub.projecthub_api.project.entity.Project;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMemberRole;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(
@@ -38,9 +41,14 @@ public class ProjectMember {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private Role role;
+    private ProjectMemberRole role;
 
-    public ProjectMember() {
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -63,11 +71,15 @@ public class ProjectMember {
         this.user = user;
     }
 
-    public Role getRole() {
+    public ProjectMemberRole getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(ProjectMemberRole role) {
         this.role = role;
     }
-}*/
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+}

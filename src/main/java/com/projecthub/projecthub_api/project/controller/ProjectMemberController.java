@@ -1,4 +1,4 @@
-package com.projecthub.projecthub_api.project.controller;
+/*package com.projecthub.projecthub_api.project.controller;
 
 import com.projecthub.projecthub_api.project.dto.AddProjectMemberRequest;
 import com.projecthub.projecthub_api.project.dto.ProjectMemberResponse;
@@ -59,4 +59,4 @@ public class ProjectMemberController {
                 userId
         );
     }
-}
+}*/

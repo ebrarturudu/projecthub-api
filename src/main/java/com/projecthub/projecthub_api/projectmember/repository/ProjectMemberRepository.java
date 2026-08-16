@@ -1,7 +1,7 @@
-/* package com.projecthub.projecthub_api.project.repository;
+package com.projecthub.projecthub_api.projectmember.repository;
 
-import com.projecthub.projecthub_api.User.entity.Role;
-import com.projecthub.projecthub_api.project.entity.ProjectMember;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMember;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMemberRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -27,11 +27,11 @@ public interface ProjectMemberRepository
 
     boolean existsByProjectIdAndRole(
             Long projectId,
-            Role role
+            ProjectMemberRole role
     );
 
     void deleteByProjectIdAndUserId(
             Long projectId,
             UUID userId
     );
-} */
+}

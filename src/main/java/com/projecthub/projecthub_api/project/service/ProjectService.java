@@ -1,13 +1,13 @@
 package com.projecthub.projecthub_api.project.service;
 
-import com.projecthub.projecthub_api.User.entity.Role;
-import com.projecthub.projecthub_api.User.entity.User;
-import com.projecthub.projecthub_api.User.repository.UserRepository;
 import com.projecthub.projecthub_api.project.dto.CreateProjectRequest;
 import com.projecthub.projecthub_api.project.entity.Project;
-import com.projecthub.projecthub_api.project.entity.ProjectMember;
-import com.projecthub.projecthub_api.project.repository.ProjectMemberRepository;
 import com.projecthub.projecthub_api.project.repository.ProjectRepository;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMember;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMemberRole;
+import com.projecthub.projecthub_api.projectmember.repository.ProjectMemberRepository;
+import com.projecthub.projecthub_api.User.entity.User;
+import com.projecthub.projecthub_api.User.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -48,13 +48,13 @@ public class ProjectService {
 
         Project savedProject = projectRepository.save(project);
 
-        ProjectMember owner = new ProjectMember();
+        ProjectMember projectManager = new ProjectMember();
 
-        owner.setProject(savedProject);
-        owner.setUser(user);
-        owner.setRole(Role.OWNER);
+        projectManager.setProject(savedProject);
+        projectManager.setUser(user);
+        projectManager.setRole(ProjectMemberRole.PROJECT_MANAGER);
 
-        projectMemberRepository.save(owner);
+        projectMemberRepository.save(projectManager);
 
         return savedProject;
     }

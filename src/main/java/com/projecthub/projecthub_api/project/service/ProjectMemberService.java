@@ -1,13 +1,13 @@
-package com.projecthub.projecthub_api.project.service;
+/*package com.projecthub.projecthub_api.project.service;
 
-import com.projecthub.projecthub_api.User.entity.Role;
 import com.projecthub.projecthub_api.User.entity.User;
 import com.projecthub.projecthub_api.User.repository.UserRepository;
 import com.projecthub.projecthub_api.project.dto.ProjectMemberResponse;
 import com.projecthub.projecthub_api.project.entity.Project;
-import com.projecthub.projecthub_api.project.entity.ProjectMember;
-import com.projecthub.projecthub_api.project.repository.ProjectMemberRepository;
 import com.projecthub.projecthub_api.project.repository.ProjectRepository;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMember;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMemberRole;
+import com.projecthub.projecthub_api.projectmember.repository.ProjectMemberRepository;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -37,7 +37,7 @@ public class ProjectMemberService {
     public ProjectMember addMember(
             Long projectId,
             UUID userId,
-            Role role
+            ProjectMemberRole role
     ) {
 
         Authentication authentication =
@@ -65,26 +65,15 @@ public class ProjectMemberService {
                         )
                 );
 
-        Role currentUserRole = currentMember.getRole();
+        ProjectMemberRole currentUserRole = currentMember.getRole();
 
-        if (currentUserRole != Role.OWNER
-                && currentUserRole != Role.ADMIN
-                && currentUserRole != Role.PROJECT_MANAGER) {
+        if (currentUserRole != ProjectMemberRole.PROJECT_MANAGER) {
 
             throw new AccessDeniedException(
                     "You do not have permission to add members"
             );
         }
 
-        if (role == Role.OWNER &&
-                projectMemberRepository.existsByProjectIdAndRole(
-                        projectId, Role.OWNER
-                )) {
-            throw new IllegalStateException(
-                    "Project already has an owner"
-            );
-
-        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new IllegalArgumentException("User not found")
@@ -110,6 +99,7 @@ public class ProjectMemberService {
 
         return projectMemberRepository.save(projectMember);
     }
+
     private ProjectMember getCurrentUserProjectMembership(Long projectId) {
 
         Authentication authentication =
@@ -123,13 +113,17 @@ public class ProjectMemberService {
                 );
 
         return projectMemberRepository
-                .findByProjectIdAndUserId(projectId, currentUser.getId())
+                .findByProjectIdAndUserId(
+                        projectId,
+                        currentUser.getId()
+                )
                 .orElseThrow(() ->
-                        new IllegalStateException(
+                        new AccessDeniedException(
                                 "User is not a member of this project"
                         )
                 );
     }
+
     public List<ProjectMemberResponse> getMembers(Long projectId) {
 
         if (!projectRepository.existsById(projectId)) {
@@ -148,6 +142,7 @@ public class ProjectMemberService {
                 ))
                 .toList();
     }
+
     public void removeMember(
             Long projectId,
             UUID userId
@@ -156,11 +151,9 @@ public class ProjectMemberService {
         ProjectMember currentMember =
                 getCurrentUserProjectMembership(projectId);
 
-        Role currentUserRole = currentMember.getRole();
+        ProjectMemberRole currentUserRole = currentMember.getRole();
 
-        if (currentUserRole != Role.OWNER
-                && currentUserRole != Role.ADMIN
-                && currentUserRole != Role.PROJECT_MANAGER) {
+        if (currentUserRole != ProjectMemberRole.PROJECT_MANAGER) {
 
             throw new AccessDeniedException(
                     "You do not have permission to remove members"
@@ -176,13 +169,6 @@ public class ProjectMemberService {
                                 )
                         );
 
-        if (memberToRemove.getRole() == Role.OWNER) {
-
-            throw new IllegalStateException(
-                    "Project owner cannot be removed"
-            );
-        }
-
         if (currentMember.getUser().getId().equals(userId)) {
 
             throw new IllegalStateException(
@@ -192,4 +178,4 @@ public class ProjectMemberService {
 
         projectMemberRepository.delete(memberToRemove);
     }
-}
+}*/

@@ -1,4 +1,4 @@
-package com.projecthub.projecthub_api.project.dto;
+/*package com.projecthub.projecthub_api.project.dto;
 
 import com.projecthub.projecthub_api.User.entity.Role;
 
@@ -41,4 +41,4 @@ public class ProjectMemberResponse {
     public Role getRole() {
         return role;
     }
-}
+}*/

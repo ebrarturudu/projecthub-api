@@ -5,6 +5,7 @@ import com.projecthub.projecthub_api.project.entity.Project;
 import com.projecthub.projecthub_api.project.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,10 +19,13 @@ public class ProjectController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Project createProject(
+    public ResponseEntity<Project> createProject(
             @Valid @RequestBody CreateProjectRequest request
     ) {
-        return projectService.createProject(request);
+        Project project = projectService.createProject(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(project);
     }
 }
