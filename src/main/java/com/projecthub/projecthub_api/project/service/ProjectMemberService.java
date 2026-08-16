@@ -148,4 +148,48 @@ public class ProjectMemberService {
                 ))
                 .toList();
     }
+    public void removeMember(
+            Long projectId,
+            UUID userId
+    ) {
+
+        ProjectMember currentMember =
+                getCurrentUserProjectMembership(projectId);
+
+        Role currentUserRole = currentMember.getRole();
+
+        if (currentUserRole != Role.OWNER
+                && currentUserRole != Role.ADMIN
+                && currentUserRole != Role.PROJECT_MANAGER) {
+
+            throw new AccessDeniedException(
+                    "You do not have permission to remove members"
+            );
+        }
+
+        ProjectMember memberToRemove =
+                projectMemberRepository
+                        .findByProjectIdAndUserId(projectId, userId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "User is not a member of this project"
+                                )
+                        );
+
+        if (memberToRemove.getRole() == Role.OWNER) {
+
+            throw new IllegalStateException(
+                    "Project owner cannot be removed"
+            );
+        }
+
+        if (currentMember.getUser().getId().equals(userId)) {
+
+            throw new IllegalStateException(
+                    "You cannot remove yourself from the project"
+            );
+        }
+
+        projectMemberRepository.delete(memberToRemove);
+    }
 }

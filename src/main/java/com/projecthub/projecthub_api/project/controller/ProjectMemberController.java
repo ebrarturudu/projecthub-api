@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -45,5 +46,17 @@ public class ProjectMemberController {
             @PathVariable Long projectId
     ) {
         return projectMemberService.getMembers(projectId);
+    }
+    @DeleteMapping("/{projectId}/members/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeMember(
+            @PathVariable Long projectId,
+            @PathVariable UUID userId
+    ) {
+
+        projectMemberService.removeMember(
+                projectId,
+                userId
+        );
     }
 }

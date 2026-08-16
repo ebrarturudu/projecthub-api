@@ -21,10 +21,17 @@ public interface ProjectMemberRepository
             UUID userId
     );
 
-    List<ProjectMember> findAllByProjectId(Long projectId);
+    List<ProjectMember> findAllByProjectId(
+            Long projectId
+    );
 
     boolean existsByProjectIdAndRole(
             Long projectId,
             Role role
+    );
+
+    void deleteByProjectIdAndUserId(
+            Long projectId,
+            UUID userId
     );
 }
