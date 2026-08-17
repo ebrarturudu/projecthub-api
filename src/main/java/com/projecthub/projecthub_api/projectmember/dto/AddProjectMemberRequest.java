@@ -1,6 +1,6 @@
-/*package com.projecthub.projecthub_api.project.dto;
+package com.projecthub.projecthub_api.projectmember.dto;
 
-import com.projecthub.projecthub_api.User.entity.Role;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMemberRole;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
@@ -11,7 +11,7 @@ public class AddProjectMemberRequest {
     private UUID userId;
 
     @NotNull
-    private Role role;
+    private ProjectMemberRole role;
 
     public AddProjectMemberRequest() {
     }
@@ -24,11 +24,11 @@ public class AddProjectMemberRequest {
         this.userId = userId;
     }
 
-    public Role getRole() {
+    public ProjectMemberRole getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(ProjectMemberRole role) {
         this.role = role;
     }
-}*/
+}

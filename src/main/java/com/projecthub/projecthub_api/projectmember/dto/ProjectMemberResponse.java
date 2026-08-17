@@ -1,6 +1,6 @@
-/*package com.projecthub.projecthub_api.project.dto;
+package com.projecthub.projecthub_api.projectmember.dto;
 
-import com.projecthub.projecthub_api.User.entity.Role;
+import com.projecthub.projecthub_api.projectmember.entity.ProjectMemberRole;
 
 import java.util.UUID;
 
@@ -9,7 +9,7 @@ public class ProjectMemberResponse {
     private Long id;
     private Long projectId;
     private UUID userId;
-    private Role role;
+    private ProjectMemberRole role;
 
     public ProjectMemberResponse() {
     }
@@ -18,7 +18,7 @@ public class ProjectMemberResponse {
             Long id,
             Long projectId,
             UUID userId,
-            Role role
+            ProjectMemberRole role
     ) {
         this.id = id;
         this.projectId = projectId;
@@ -38,7 +38,7 @@ public class ProjectMemberResponse {
         return userId;
     }
 
-    public Role getRole() {
+    public ProjectMemberRole getRole() {
         return role;
     }
-}*/
+}

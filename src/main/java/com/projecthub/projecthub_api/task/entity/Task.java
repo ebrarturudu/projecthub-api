@@ -55,10 +55,6 @@ public class Task {
         if (status == null) {
             status = TaskStatus.TODO;
         }
-
-        if (priority == null) {
-            priority = TaskPriority.MEDIUM;
-        }
     }
 
     @PreUpdate
