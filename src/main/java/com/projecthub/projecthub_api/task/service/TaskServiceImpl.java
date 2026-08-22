@@ -9,6 +9,7 @@ import com.projecthub.projecthub_api.projectmember.entity.ProjectMemberRole;
 import com.projecthub.projecthub_api.projectmember.repository.ProjectMemberRepository;
 import com.projecthub.projecthub_api.task.dto.CreateTaskRequest;
 import com.projecthub.projecthub_api.task.dto.TaskResponse;
+import com.projecthub.projecthub_api.task.dto.UpdateTaskRequest;
 import com.projecthub.projecthub_api.task.entity.Task;
 import com.projecthub.projecthub_api.task.repository.TaskRepository;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -141,6 +143,202 @@ public class TaskServiceImpl implements TaskService {
         response.setUpdatedAt(task.getUpdatedAt());
 
         return response;
+    }
+
+    @Override
+    public List<TaskResponse> getTasksByProject(Long projectId) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Current user not found")
+                );
+
+        projectRepository.findById(projectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Project not found")
+                );
+
+        projectMemberRepository
+                .findByProjectIdAndUserId(
+                        projectId,
+                        currentUser.getId()
+                )
+                .orElseThrow(() ->
+                        new AccessDeniedException(
+                                "You are not a member of this project"
+                        )
+                );
+
+        return taskRepository
+                .findAllByProjectId(projectId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public TaskResponse getTaskById(
+            Long projectId,
+            Long taskId
+    ) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Current user not found")
+                );
+
+        projectRepository.findById(projectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Project not found")
+                );
+
+        projectMemberRepository
+                .findByProjectIdAndUserId(
+                        projectId,
+                        currentUser.getId()
+                )
+                .orElseThrow(() ->
+                        new AccessDeniedException(
+                                "You are not a member of this project"
+                        )
+                );
+
+        Task task = taskRepository
+                .findByIdAndProjectId(taskId, projectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Task not found"
+                        )
+                );
+
+        return mapToResponse(task);
+    }
+
+    @Override
+    public TaskResponse updateTask(
+            Long projectId,
+            Long taskId,
+            UpdateTaskRequest request
+    ) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Current user not found")
+                );
+
+        projectRepository.findById(projectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Project not found")
+                );
+
+        ProjectMember currentMember =
+                projectMemberRepository
+                        .findByProjectIdAndUserId(
+                                projectId,
+                                currentUser.getId()
+                        )
+                        .orElseThrow(() ->
+                                new AccessDeniedException(
+                                        "You are not a member of this project"
+                                )
+                        );
+
+        if (currentMember.getRole()
+                != ProjectMemberRole.PROJECT_MANAGER) {
+
+            throw new AccessDeniedException(
+                    "Only project managers can update tasks"
+            );
+        }
+
+        Task task = taskRepository
+                .findByIdAndProjectId(taskId, projectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Task not found"
+                        )
+                );
+
+        task.setTitle(request.getTitle());
+        task.setDescription(request.getDescription());
+        task.setStatus(request.getStatus());
+        task.setPriority(request.getPriority());
+        task.setDueDate(request.getDueDate());
+
+        Task updatedTask = taskRepository.save(task);
+
+        return mapToResponse(updatedTask);
+    }
+
+    @Override
+    public void deleteTask(
+            Long projectId,
+            Long taskId
+    ) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String email = authentication.getName();
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Current user not found"
+                        )
+                );
+
+        projectRepository.findById(projectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Project not found"
+                        )
+                );
+
+        ProjectMember currentMember =
+                projectMemberRepository
+                        .findByProjectIdAndUserId(
+                                projectId,
+                                currentUser.getId()
+                        )
+                        .orElseThrow(() ->
+                                new AccessDeniedException(
+                                        "You are not a member of this project"
+                                )
+                        );
+
+        if (currentMember.getRole()
+                != ProjectMemberRole.PROJECT_MANAGER) {
+
+            throw new AccessDeniedException(
+                    "Only project managers can delete tasks"
+            );
+        }
+
+        Task task = taskRepository
+                .findByIdAndProjectId(taskId, projectId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Task not found"
+                        )
+                );
+
+        taskRepository.delete(task);
     }
 }
 
